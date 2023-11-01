@@ -1,0 +1,7 @@
+google-search-results==2.4.2
+flask==2.2.2
+langchain==0.0.327
+langsmith==0.0.54
+python-dotenv==0.21.0
+pydantic==2.4.2
+Werkzeug==2.2.2
