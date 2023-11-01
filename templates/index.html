@@ -1,0 +1,67 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Ice Breaker</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body class="bg-white">
+    <div class="flex flex-col box-item h-full w-full mb-6">
+        <div class="flex flex-row mb-2 bg-sky-700">
+            <h1 class="text-4xl px-4 text-white text-center my-4 w-full max-w-[50%]">LinkedIn Profile Summary</h1>
+            <div class="mx-auto w-full max-w-[50%] my-4">
+                <form id="name-form" class="flex items-center">
+                    <div class="relative w-full max-w-[75%]">
+                        <input class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" type="text" id="name" name="name" placeholder="Enter name">
+                    </div>
+                    <button class="p-2.5 ml-2 text-sm font-medium text-white bg-blue-700 rounded-lg border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 hover:scale-105 ease-in-out duration-300" id="magic-button" type="submit">Do Your Magic</button>
+                </form>
+            </div>
+        </div>
+        <div class="mx-auto text-center mt-4 max-w-[70%]" id="result">
+            <img id="profile-pic" src="" class="mx-auto" alt="Profile Picture" style="display: none; max-width: 100%; height: auto; border-radius: 50%; margin-bottom: 20px;">
+            
+            <h2 class="text-3xl text-white bg-sky-700 p-4 mx-auto my-4">Summary</h2>
+            <p id="summary-and-facts" class="text-left p-4 text-black mx-auto"></p>
+            
+            <h2 class="text-3xl text-white bg-sky-700 p-4 mx-auto my-4">Interesting Facts</h2>
+            <div id="interests" class="text-left p-4 mx-auto text-black"></div>
+            
+            <h2 class="text-3xl text-white bg-sky-700 p-4 mx-auto my-4">Ice Breakers</h2>
+            <div id="ice-breakers" class="text-left p-4 mx-auto text-black"></div>
+            
+            <h2 class="text-3xl text-white bg-sky-700 p-4 mx-auto my-4">Topics of Interest</h2>
+            <div id="topics-of-interest" class="text-left p-4 mx-auto text-black"></div>
+        </div>
+    </div>
+    <script>
+        $(document).ready(function () {
+            $('#name-form').on('submit', function (e) {
+                e.preventDefault();
+                $('#spinner-container').show();
+                $.ajax({
+                    url: '/process',
+                    data: $('#name-form').serialize(),
+                    type: 'POST',
+                    success: function (response) {
+                        $('#profile-pic').attr('src', response.pic_url); // Update the profile picture src attribute
+                        $('#profile-pic').show(); // Show the profile picture
+                        $('#summary-and-facts').text(response.summary);
+                        $('#interests').html('<ul class="list-disc list-inside">' + response.facts.map(fact => '<li>' + fact + '</li>').join('') + '</ul>');
+                        $('#ice-breakers').html('<ul class="list-disc list-inside">' + response.ice_breakers.map(ice_breaker => '<li>' + ice_breaker + '</li>').join('') + '</ul>');
+                        $('#topics-of-interest').html('<ul class="list-disc list-inside">' + response.interests.map(topic => '<li>' + topic + '</li>').join('') + '</ul>');
+                    },
+                    error: function (error) {
+                        console.log(error);
+                    },
+                    complete: function () {
+                        $('#spinner-container').hide();
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
